@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  deployment-demo
+  namespace: ns-demo
+  labels:
+    name:  first-app
+    role: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels: 
+      app: first-app
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      name: first-pod
+      namespace: ns-demo
+      labels:
+        app: first-app
+    spec:
+      containers:
+      - image: foody.azurecr.io/foody:103
+        name: first-pod   
+        resources:
+          requests:
+            cpu: 200m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 128Mi
+        livenessProbe:
+          httpGet:
+            path: /helthy
+            port: 3000
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+          periodSeconds: 5
+          failureThreshold: 3      
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP  
+      imagePullSecrets:
+        - name: sec-first-pod

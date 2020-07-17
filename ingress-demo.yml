@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ing-demo
+  namespace: ns-demo
+  labels:
+    app: first-app
+spec:
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: "/"
+        backend:
+          serviceName: first-pod
+          servicePort: 8080
+    
